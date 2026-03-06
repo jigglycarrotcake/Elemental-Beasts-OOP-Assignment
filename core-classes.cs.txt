@@ -1,0 +1,281 @@
+using System;
+
+class Entity
+{
+    private string Name;
+    private int MaxHealth;
+    private int CurrentHealth;
+    private int AttackPower;
+    private int DefensePower;
+    protected bool isDefending;
+
+    public string name
+    {
+        get { return Name; }
+        set { Name = value; }
+    }
+
+    public int maxHealth
+    {
+        get { return MaxHealth; }
+        set { MaxHealth = value; }
+    }
+
+    public int currentHealth
+    {
+        get { return CurrentHealth; }
+        set { CurrentHealth = value; }
+    }
+
+    public int attackPower
+    {
+        get { return AttackPower; }
+        set { AttackPower = value; }
+    }
+
+    public int defensePower
+    {
+        get { return DefensePower; }
+        set { DefensePower = value; }
+    }
+
+    protected Entity(string givenName, int givenMaxHealth, int givenAttackPower, int givenDefensePower)
+    {
+        Name = givenName;
+        MaxHealth = givenMaxHealth;
+        CurrentHealth = givenMaxHealth;
+        AttackPower = givenAttackPower;
+        DefensePower = givenDefensePower;
+        isDefending = false;
+    }
+
+    public virtual void TakeDamage(int damage)
+    {
+        int totalDamage = damage;
+
+        if (isDefending)
+        {
+            totalDamage = damage - DefensePower;
+            Console.WriteLine($"{Name} defended the attack!");
+            isDefending = false;
+        }
+
+        CurrentHealth -= totalDamage;
+        Console.WriteLine($"{Name} took {totalDamage} damage. Health: {CurrentHealth}/{MaxHealth}");
+    }
+
+    public virtual void AttackEntity(Entity target)
+    {
+        if (IsAlive())
+        {
+            Console.WriteLine($"{Name} attacks {target.name} for {AttackPower} damage!");
+            target.TakeDamage(AttackPower);
+        }
+        else
+        {
+            Console.WriteLine($"{Name} is already defeated.");
+        }
+    }
+
+    public bool IsAlive()
+    {
+        return CurrentHealth > 0;
+    }
+
+    public void ResetDefense()
+    {
+        isDefending = false;
+        Console.WriteLine($"{Name} is no longer defending.");
+    }
+    
+    public virtual void DisplayStats()
+    {
+        // Basically like an indicator above the enitities to show their details like HP, skills & stuff (e.g. Hilichurls In Genshin)
+        Console.WriteLine("\n---- Stats ----");
+        Console.WriteLine("Name: " + name);
+        Console.WriteLine("HP: " + currentHealth + "/" + maxHealth);
+        Console.WriteLine("ATK: " + attackPower);
+        Console.WriteLine("DEF: " + defensePower);
+        Console.WriteLine("------------------");
+    }
+}
+
+
+class Monster : Entity
+{
+    private string MonsterType;
+    private string Description;
+
+    public string monsterType
+    {
+        get { return MonsterType; }
+        set { MonsterType = value; }
+    }
+
+    public string description
+    {
+        get { return Description; }
+        set { Description = value; }
+    }
+
+    public Monster(int givenMaxHealth, int givenAttackPower, int givenDefensePower, string givenMonsterType, string givenDescription)
+        : base("Monster", givenMaxHealth, givenAttackPower, givenDefensePower)
+    {
+        MonsterType = givenMonsterType;
+        Description = givenDescription;
+    }
+
+    public void RandomAction(Player target)
+    {
+        if (IsAlive())
+        {
+            Random random = new Random();
+            int action = random.Next(0, 11);
+
+            if (action <= 8)
+            {
+                Console.WriteLine($"{MonsterType} monster prepares to attack!");
+                AttackEntity(target);
+            }
+            else
+            {
+                Console.WriteLine($"{MonsterType} monster is defending!");
+                isDefending = true;
+            }
+        }
+    }
+}
+
+
+class Boss : Monster
+{
+    public Boss(int givenMaxHealth, int givenAttackPower, int givenDefensePower,
+                string givenMonsterType, string givenDescription)
+        : base(givenMaxHealth, givenAttackPower, givenDefensePower, givenMonsterType, givenDescription)
+    {
+    }
+
+    public void setDescription(string newDescription)
+    {
+        description = newDescription;
+    }
+}
+
+
+class Player : Entity
+{
+    private int PotionHeals;
+    private bool FireImmune;
+    private bool WaterBend;
+    private bool NatureBuff;
+
+    public int Healing_Portions
+    {
+        get { return PotionHeals; }
+        set { PotionHeals = value; }
+    }
+
+    public bool Fire_Immunity
+    {
+        get { return FireImmune; }
+        set { FireImmune = value; }
+    }
+
+    public bool Water_Power
+    {
+        get { return WaterBend; }
+        set { WaterBend = value; }
+    }
+
+    public bool Buffer
+    {
+        get { return NatureBuff; }
+        set { NatureBuff = value; }
+    }
+
+    public Player(string givenName, int givenMaxHealth, int givenAttackPower, int givenDefensePower)
+        : base(givenName, givenMaxHealth, givenAttackPower, givenDefensePower)
+    {
+        PotionHeals = 3;    //As per required in Inventory
+        FireImmune = false; // By deafult
+        WaterBend = false;  // By default
+        NatureBuff = false; // By default
+    }
+
+    public void ChooseAction()
+    {
+        Console.WriteLine("\nWhat is your next move?");
+        Console.WriteLine("1. Attack?");
+        Console.WriteLine("2. Heal?");
+        Console.WriteLine("3. Defend?");
+    }
+
+    public void Heal()
+    {
+        if (Healing_Portions > 0)
+        {
+            currentHealth += 20;
+            PotionHeals--;
+            Console.WriteLine($"{name} used potion! Remaining health: {currentHealth}");
+        }
+        else
+        {
+            Console.WriteLine("No potions left!");
+        }
+    }
+
+    public void ActivateFireImmune()
+    {
+        Fire_Immunity = true;
+        Console.WriteLine($"{name} is now immune to fire attacks!");
+    }
+
+    public void ActivateWaterBend()
+    {
+        Water_Power = true;
+        Console.WriteLine($"{name} used water bend ability!");
+    }
+
+    public void ActivateNatureBuff()
+    {
+        Buffer = true;
+        Console.WriteLine($"{name} gained nature buff!");
+    }
+}
+
+
+class Potion
+{
+    private string Name;
+    private string Description;
+
+    public string Portion_Name
+    {
+        get { return Name; }
+        set { Name = value; }
+    }
+
+    public string Portion_Perks
+    {
+        get { return Description; }
+        set { Description = value; }
+    }
+
+    public Potion(string givenPortion_Name, string givenPortion_Details)
+    {
+        Name = givenPortion_Name;
+        Description = givenPortion_Details;
+    }
+
+    public void Activate(Player target)
+    {
+        Console.WriteLine($"{Name} potion activated!");
+        target.currentHealth += 25;
+        Console.WriteLine($"{target.Portion_Name} health increased!");
+    }
+
+    public void Reset()
+    {
+        Console.WriteLine($"{Name} potion effect has ended.");
+    }
+}
