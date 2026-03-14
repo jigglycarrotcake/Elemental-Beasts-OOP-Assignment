@@ -1,12 +1,13 @@
 using System;
+namespace Elemental_Beasts;
 
-class Entity
+public class Entity
 {
     private string Name;
-    private int MaxHealth;
+    private int MaxHealth; //maxhealth = 120, DEFAULT AD = 20
     private int CurrentHealth;
     private int AttackPower;
-    private int DefensePower;
+    private int DefensePower; //default = 5, can increase with potions or buffs
     protected bool isDefending;
 
     public string name
@@ -82,6 +83,12 @@ class Entity
         return CurrentHealth > 0;
     }
 
+    public void Defend()
+    {
+        isDefending = true;
+        Console.WriteLine($"{Name} is defending and will take reduced damage on the next attack!");
+    }
+
     public void ResetDefense()
     {
         isDefending = false;
@@ -101,7 +108,7 @@ class Entity
 }
 
 
-class Monster : Entity
+public class Monster : Entity
 {
     private string MonsterType;
     private string Description;
@@ -147,7 +154,7 @@ class Monster : Entity
 }
 
 
-class Boss : Monster
+public class Boss : Monster
 {
     public Boss(int givenMaxHealth, int givenAttackPower, int givenDefensePower,
                 string givenMonsterType, string givenDescription)
@@ -162,7 +169,7 @@ class Boss : Monster
 }
 
 
-class Player : Entity
+public class Player : Entity
 {
     private int PotionHeals;
     private bool FireImmune;
@@ -204,11 +211,13 @@ class Player : Entity
 
     public void ChooseAction()
     {
-        Console.WriteLine("\nWhat is your next move?");
-        Console.WriteLine("1. Attack?");
-        Console.WriteLine("2. Heal?");
-        Console.WriteLine("3. Defend?");
-    }
+        Console.WriteLine("Player's turn:");
+        Console.WriteLine("--------------------------------");
+        Console.WriteLine("|    1. Attack                  |");
+        Console.WriteLine("|    2. Heal                    |");
+        Console.WriteLine("|    3. Defend                  |");
+        Console.WriteLine("--------------------------------");
+        }
 
     public void Heal()
     {
@@ -244,38 +253,122 @@ class Player : Entity
 }
 
 
-class Potion
+public class Potion
 {
     private string Name;
     private string Description;
 
-    public string Portion_Name
+    public string Potion_Name
     {
         get { return Name; }
         set { Name = value; }
     }
 
-    public string Portion_Perks
+    public string Potion_Perks
     {
         get { return Description; }
         set { Description = value; }
     }
 
-    public Potion(string givenPortion_Name, string givenPortion_Details)
+    public Potion(string givenPotion_Name, string givenPotion_Details)
     {
-        Name = givenPortion_Name;
-        Description = givenPortion_Details;
+        Name = givenPotion_Name;
+        Description = givenPotion_Details;
     }
 
     public void Activate(Player target)
     {
         Console.WriteLine($"{Name} potion activated!");
         target.currentHealth += 25;
-        Console.WriteLine($"{target.Portion_Name} health increased!");
+        Console.WriteLine($"{target.name} health increased!");
     }
 
     public void Reset()
     {
-        Console.WriteLine($"{Name} potion effect has ended.");
+        Console.WriteLine($"{Potion_Name} potion effect has ended.");
     }
 }
+
+public class Level
+{
+    private readonly string LevelName;
+    private readonly int LevelNumber;
+    private readonly string Description;
+    private readonly Monster[] MonstersInLevel;
+   
+    public string Level_Name
+    {
+        get { return LevelName; }
+    }
+
+    public int Level_Number
+    {
+        get { return LevelNumber; }
+    }
+
+    public string Level_Description
+    {
+        get { return Description; }
+    }
+
+    public Level(string givenLevelName, int givenLevelNumber, string givenDescription, Monster[] givenMonstersInLevel)
+    {
+        LevelName = givenLevelName;
+        LevelNumber = givenLevelNumber;
+        Description = givenDescription;
+        MonstersInLevel = givenMonstersInLevel;
+    }
+}
+
+   public class GameManager
+    {
+        private string Playername;
+        private int LevelNumber;
+        private Monster currentMonster;
+        public bool isRunning; //so that program can access
+        private  List<Potion> AvailablePotions;
+
+        public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning, List<Potion> givenPotions)
+        {
+            this.Playername = givenPlayername;
+            this.LevelNumber = givenLevel;
+            this.currentMonster = currentMonster;
+            this.isRunning = isRunning;
+            AvailablePotions = givenPotions;
+        }
+
+        public string Player
+    {
+        get { return Playername; }
+        set { Playername = value; }
+    }
+
+    public int Level
+    {
+        get { return LevelNumber; }
+        set { LevelNumber = value; }
+
+
+    }
+
+    public Monster CurrentMonster
+    {
+        get { return currentMonster; }
+        set { currentMonster = value; }
+    }
+
+    public bool IsRunning
+    {
+        get { return isRunning; }
+        set { isRunning = value; }
+    }
+
+    public List<Potion> Potions
+    {
+        get { return AvailablePotions; }
+        set { AvailablePotions = value; }
+    }
+    
+    }
+
+    
