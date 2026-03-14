@@ -1,0 +1,70 @@
+using System;
+using Elemental_Beasts;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+// Load level data first (using classes)
+Monster[] level1Monsters = new Monster[]
+{
+            new Monster(80, 15, 5, "Earth Fairies", "A creature emerges, one that is ethereal. It looks harmless, with leaves and petals dancing around it. Do not be fooled, looks can be deceiving for it is a destructive being."),
+            new Monster(80, 15, 5, "Earth Fairies", "With a low rumble, the creature breaks through the woods, dragging a heavy wake of tangled roots and creeping flora. The ground groans under its footsteps; Mother Nature has answered, and she is not merciful."),
+            new Monster(80, 15, 5, "Earth Fairies", "You see a mound of earth topped with beautiful, rare orchids. It seems like a piece of untouched paradise, but the 'soil' is actually a hardened shell for a destructive primitive spirit."),
+};
+
+Level level1 = new Level("Forest Entrance", 1, "A mysterious woods filled with low-level beasts.", level1Monsters);
+
+// Then create player
+Player player = new Player("Hero", 120, 20, 5);
+
+// Pick current monster from the level for the battle
+Monster currentMonster = level1Monsters[0];
+
+// Create game manager with loaded level info
+GameManager gameManager = new GameManager(player.name, level1.Level_Number, currentMonster, true, new List<Potion>());
+
+Console.WriteLine($"Loaded {level1.Level_Name} (Level {level1.Level_Number}) with {level1Monsters.Length} monsters.");
+Console.WriteLine($"Player: {player.name} vs Monster: {currentMonster.monsterType}");
+
+// Battle Loop
+
+while (gameManager.isRunning)
+{
+    // Player's turn
+    player.ChooseAction();
+    string userInput = Console.ReadLine();
+
+    switch (userInput)
+    {
+        case "1":
+            player.AttackEntity(currentMonster);
+            if (currentMonster.currentHealth <= 0)
+            {
+                Console.WriteLine($"{currentMonster.monsterType} has been defeated!");
+                break;
+            }
+            break;
+        case "2":
+            player.Heal();
+            break;
+        case "3":
+            player.Defend();
+            break;
+        default:
+            Console.WriteLine("Invalid input, please choose 1, 2, or 3.");
+            continue;
+    }
+
+    // Monster's turn
+    Console.WriteLine("Monster's turn:");
+    currentMonster.AttackEntity(player);
+    if (player.currentHealth <= 0)
+    {
+        Console.WriteLine($"{player.name} has been defeated! Game Over.");
+        return;
+    }
+}
+
+    }
+}
