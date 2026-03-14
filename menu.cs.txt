@@ -1,0 +1,77 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        string choice; string username; 
+        Console.WriteLine("Welcome to the Game: ELEMENTAL BEASTS!");
+        Console.Write("Please write your username to proceed: ");
+        username = Console.ReadLine();
+        Console.WriteLine($"Welcome to the Game, {username}");
+        
+        Console.WriteLine("--------Menu--------");
+        Console.WriteLine("Option 1: Start Game from Start");
+        Console.WriteLine("Option 2: Select Level");
+        Console.WriteLine("Option 3: Exit Game");
+        Console.Write("Choose one of the options below: ");
+        choice = Console.ReadLine();
+
+        while(choice != "3")
+        {
+            if(choice == "1")
+            {
+                Console.WriteLine("Starting Level 1: Fire Abyss...");
+                Console.WriteLine("Game has been concluded.");
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+            else if(choice == "2")
+            {
+                Console.WriteLine("--------Levels--------");
+                Console.WriteLine("Level 1: Fire Abyss");
+                Console.WriteLine("Level 2: Sea Vengeance");
+                Console.WriteLine("Level 3: Thunderstorm Rage");
+                Console.Write("Choose a Level: ");
+                string level = Console.ReadLine();
+
+                if(level == "1"){
+                    Console.WriteLine("Starting Level 1...");
+                    Console.WriteLine("Level has been concluded");
+                } 
+                else if(level == "2"){
+                    Console.WriteLine("Starting Level 2...");
+                    Console.WriteLine("Level has been concluded");
+                } 
+                else if(level == "3"){
+                    Console.WriteLine("Starting Level 3...");
+                    Console.WriteLine("Level has been concluded");
+                } 
+                else{
+                    Console.WriteLine("Invalid Level!");
+                } 
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("Returning to menu...");
+            }
+            else
+            {
+                Console.WriteLine("--------ERROR--------");
+                Console.WriteLine($"{choice} is Invalid Input!");
+            }
+            Console.WriteLine("--------Menu--------");
+            Console.WriteLine("Option 1: Start Game from Start");
+            Console.WriteLine("Option 2: Select Level");
+            Console.WriteLine("Option 3: Exit Game");
+            Console.Write("Choose one of the options below: ");
+            choice = Console.ReadLine();
+        }
+
+        Console.WriteLine($"Thank you for playing Elemental Beasts, {username}");
+        Console.Write("Please rate our game before you go!: ");
+        string rating = Console.ReadLine();
+        Console.WriteLine("Thank you for the rating!");
+    }
+}
