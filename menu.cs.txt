@@ -21,7 +21,7 @@ class Program
         {
             if(choice == "1")
             {
-                Console.WriteLine("Starting Level 1: Fire Abyss...");
+                Console.WriteLine("Starting Level 1: The Forest...");
                 Console.WriteLine("Game has been concluded.");
                 Console.WriteLine();
                 Console.WriteLine();
@@ -30,22 +30,22 @@ class Program
             else if(choice == "2")
             {
                 Console.WriteLine("--------Levels--------");
-                Console.WriteLine("Level 1: Fire Abyss");
+                Console.WriteLine("Level 1: The Forest");
                 Console.WriteLine("Level 2: Sea Vengeance");
-                Console.WriteLine("Level 3: Thunderstorm Rage");
+                Console.WriteLine("Level 3: Fire Abyss");
                 Console.Write("Choose a Level: ");
                 string level = Console.ReadLine();
 
                 if(level == "1"){
-                    Console.WriteLine("Starting Level 1...");
+                    Console.WriteLine("Starting Level 1: The Forest...");
                     Console.WriteLine("Level has been concluded");
                 } 
                 else if(level == "2"){
-                    Console.WriteLine("Starting Level 2...");
+                    Console.WriteLine("Starting Level 2: Sea Vengeance...");
                     Console.WriteLine("Level has been concluded");
                 } 
                 else if(level == "3"){
-                    Console.WriteLine("Starting Level 3...");
+                    Console.WriteLine("Starting Level 3: Fire Abyss...");
                     Console.WriteLine("Level has been concluded");
                 } 
                 else{
