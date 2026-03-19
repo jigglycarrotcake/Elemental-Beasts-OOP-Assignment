@@ -1,4 +1,5 @@
 using System;
+using System.Reflection.PortableExecutable;
 namespace Elemental_Beasts;
 
 public class Entity
@@ -62,6 +63,10 @@ public class Entity
         }
 
         CurrentHealth -= totalDamage;
+        if (CurrentHealth < 0)
+        {
+            CurrentHealth = 0;
+        }
         Console.WriteLine($"{Name} took {totalDamage} damage. Health: {CurrentHealth}/{MaxHealth}");
     }
 
@@ -175,6 +180,7 @@ public class Player : Entity
     private bool FireImmune;
     private bool WaterBend;
     private bool NatureBuff;
+    private string SelectedPotion;
 
     public int Healing_Portions
     {
@@ -200,13 +206,19 @@ public class Player : Entity
         set { NatureBuff = value; }
     }
 
+    public string PotionChoice
+    {
+        get { return SelectedPotion; }
+    }
+
     public Player(string givenName, int givenMaxHealth, int givenAttackPower, int givenDefensePower)
         : base(givenName, givenMaxHealth, givenAttackPower, givenDefensePower)
     {
-        PotionHeals = 3;    //As per required in Inventory
-        FireImmune = false; // By deafult
+        PotionHeals = 3;    // As per required in Inventory
+        FireImmune = false; // By default
         WaterBend = false;  // By default
         NatureBuff = false; // By default
+        SelectedPotion = "None";
     }
 
     public void ChooseAction()
@@ -216,8 +228,8 @@ public class Player : Entity
         Console.WriteLine("|    1. Attack                  |");
         Console.WriteLine("|    2. Heal                    |");
         Console.WriteLine("|    3. Defend                  |");
-        Console.WriteLine("--------------------------------");
-        }
+        Console.WriteLine("--------------------------------\n");
+    }
 
     public void Heal()
     {
@@ -225,90 +237,107 @@ public class Player : Entity
         {
             currentHealth += 20;
             PotionHeals--;
-            Console.WriteLine($"{name} used potion! Remaining health: {currentHealth}");
+            Console.WriteLine($"{name} used a healing potion! Health: {currentHealth}/{maxHealth}");
         }
         else
         {
-            Console.WriteLine("No potions left!");
+            Console.WriteLine("No healing potions left!");
         }
     }
 
     public void ActivateFireImmune()
     {
         Fire_Immunity = true;
-        Console.WriteLine($"{name} is now immune to fire attacks!");
+        SelectedPotion = "Fire Immunity";
+        Console.WriteLine($"{name} selected Fire Immunity. This works only against Fire Goblins and Bosses.");
     }
 
     public void ActivateWaterBend()
     {
         Water_Power = true;
-        Console.WriteLine($"{name} used water bend ability!");
+        SelectedPotion = "Water Potion";
+        Console.WriteLine($"{name} selected Water Potion. This works only against Ocean Guardians.");
     }
 
     public void ActivateNatureBuff()
     {
-        Buffer = true;
-        Console.WriteLine($"{name} gained nature buff!");
+        NatureBuff = true;
+        SelectedPotion = "Nature's Gift";
+        Console.WriteLine($"{name} selected Nature's Gift. This works only against Earth Fairies.");
+    }
+
+    public bool IsPotionEffectiveAgainst(Monster target)
+    {
+        if (Buffer && target.monsterType.Equals("Earth Fairies", StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (Water_Power && target.monsterType.Equals("Ocean Guardians", StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (Fire_Immunity && (target.monsterType.Equals("Fire Goblins", StringComparison.OrdinalIgnoreCase) || target is Boss))
+            return true;
+        return false;
+    }
+
+    public int GetAttackBonus(Monster target)
+    {
+        if (!IsPotionEffectiveAgainst(target))
+            return 0;
+            // to ensure potions work against corresponding mosnters only
+        if (Buffer && target.monsterType.Equals("Earth Fairies", StringComparison.OrdinalIgnoreCase))
+            return 10;
+        if (Water_Power && target.monsterType.Equals("Ocean Guardians", StringComparison.OrdinalIgnoreCase))
+            return 5;
+        if (Fire_Immunity && (target.monsterType.Equals("Fire Goblins", StringComparison.OrdinalIgnoreCase) || target is Boss))
+            return 3;
+
+        return 0;
+    }
+
+    public int GetDefenseBonus(Monster target)
+    {
+        if (!IsPotionEffectiveAgainst(target))
+            return 0;
+
+        if (Buffer && target.monsterType.Equals("Earth Fairies", StringComparison.OrdinalIgnoreCase))
+            return 5;
+        if (Water_Power && target.monsterType.Equals("Ocean Guardians", StringComparison.OrdinalIgnoreCase))
+            return 3;
+        if (Fire_Immunity && (target.monsterType.Equals("Fire Goblins", StringComparison.OrdinalIgnoreCase) || target is Boss))
+            return 10;
+
+        return 0;
     }
 }
 
-
-public class Potion
-{
-    private string Name;
-    private string Description;
-
-    public string Potion_Name
-    {
-        get { return Name; }
-        set { Name = value; }
-    }
-
-    public string Potion_Perks
-    {
-        get { return Description; }
-        set { Description = value; }
-    }
-
-    public Potion(string givenPotion_Name, string givenPotion_Details)
-    {
-        Name = givenPotion_Name;
-        Description = givenPotion_Details;
-    }
-
-    public void Activate(Player target)
-    {
-        Console.WriteLine($"{Name} potion activated!");
-        target.currentHealth += 25;
-        Console.WriteLine($"{target.name} health increased!");
-    }
-
-    public void Reset()
-    {
-        Console.WriteLine($"{Potion_Name} potion effect has ended.");
-    }
-}
 
 public class Level
 {
-    private readonly string LevelName;
-    private readonly int LevelNumber;
-    private readonly string Description;
-    private readonly Monster[] MonstersInLevel;
+    private string LevelName;
+    private int LevelNumber;
+    private string Description;
+    private Monster[] MonstersInLevel;
    
     public string Level_Name
     {
         get { return LevelName; }
+        set { LevelName = value; }
     }
 
     public int Level_Number
     {
         get { return LevelNumber; }
+        set { LevelNumber = value; }
     }
 
     public string Level_Description
     {
         get { return Description; }
+        set { Description = value; }
+    }
+
+    public Monster[] Monsters
+    {
+        get { return MonstersInLevel; }
+        set { MonstersInLevel = value; }
     }
 
     public Level(string givenLevelName, int givenLevelNumber, string givenDescription, Monster[] givenMonstersInLevel)
@@ -326,15 +355,13 @@ public class Level
         private int LevelNumber;
         private Monster currentMonster;
         public bool isRunning; //so that program can access
-        private  List<Potion> AvailablePotions;
 
-        public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning, List<Potion> givenPotions)
+        public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning)
         {
             this.Playername = givenPlayername;
             this.LevelNumber = givenLevel;
             this.currentMonster = currentMonster;
             this.isRunning = isRunning;
-            AvailablePotions = givenPotions;
         }
 
         public string Player
@@ -363,12 +390,5 @@ public class Level
         set { isRunning = value; }
     }
 
-    public List<Potion> Potions
-    {
-        get { return AvailablePotions; }
-        set { AvailablePotions = value; }
-    }
     
     }
-
-    
