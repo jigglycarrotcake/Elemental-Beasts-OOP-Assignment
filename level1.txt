@@ -62,7 +62,7 @@ Console.WriteLine();
 Monster currentMonster = level1Monsters[0]; // only one monster in this level
 
 // Create game manager with loaded level info
-GameManager gameManager = new GameManager(player.name, level1.Level_Number, currentMonster, true, new List<Potion>());
+GameManager gameManager = new GameManager(player.name, level1.Level_Number, currentMonster, true);
 Console.WriteLine($"Player: {player.name} vs Monster: {currentMonster.monsterType}");
 
 // Battle Loop
