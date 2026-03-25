@@ -362,14 +362,6 @@ public class Level
         private Monster currentMonster;
         public bool isRunning; //so that program can access
 
-        public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning)
-        {
-            this.Playername = givenPlayername;
-            this.LevelNumber = givenLevel;
-            this.currentMonster = currentMonster;
-            this.isRunning = isRunning;
-        }
-
         public string Player
     {
         get { return Playername; }
@@ -396,5 +388,12 @@ public class Level
         set { isRunning = value; }
     }
 
+     public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning)
+        {
+            this.Playername = givenPlayername;
+            this.LevelNumber = givenLevel;
+            this.currentMonster = currentMonster;
+            this.isRunning = isRunning;
+        }
     
     }
