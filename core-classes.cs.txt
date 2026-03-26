@@ -1,5 +1,4 @@
 using System;
-using System.Reflection.PortableExecutable;
 namespace Elemental_Beasts;
 
 public class Entity
@@ -155,6 +154,17 @@ public class Monster : Entity
                 isDefending = true;
             }
         }
+    }
+
+    public override void DisplayStats()
+    {
+        Console.WriteLine("\n---- Monster Stats ----");
+        Console.WriteLine("Type: " + monsterType);
+        Console.WriteLine("Description: " + description);
+        Console.WriteLine("HP: " + currentHealth + "/" + maxHealth);
+        Console.WriteLine("ATK: " + attackPower);
+        Console.WriteLine("DEF: " + defensePower);
+        Console.WriteLine("------------------");
     }
 }
 
@@ -312,6 +322,17 @@ public class Player : Entity
 
         return 0;
     }
+
+    public override void DisplayStats()
+    {
+        Console.WriteLine("\n---- Player Stats ----");
+        Console.WriteLine("Name: " + name);
+        Console.WriteLine("HP: " + currentHealth + "/" + maxHealth);
+        Console.WriteLine("ATK: " + attackPower);
+        Console.WriteLine("DEF: " + defensePower);
+        Console.WriteLine("------------------");
+    }
+
 }
 
 
@@ -362,6 +383,14 @@ public class Level
         private Monster currentMonster;
         public bool isRunning; //so that program can access
 
+        public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning)
+        {
+            this.Playername = givenPlayername;
+            this.LevelNumber = givenLevel;
+            this.currentMonster = currentMonster;
+            this.isRunning = isRunning;
+        }
+
         public string Player
     {
         get { return Playername; }
@@ -388,12 +417,5 @@ public class Level
         set { isRunning = value; }
     }
 
-     public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning)
-        {
-            this.Playername = givenPlayername;
-            this.LevelNumber = givenLevel;
-            this.currentMonster = currentMonster;
-            this.isRunning = isRunning;
-        }
     
     }
