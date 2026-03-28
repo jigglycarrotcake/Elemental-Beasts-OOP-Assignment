@@ -125,15 +125,23 @@ class Program
                 Console.WriteLine($"{currentMonster.monsterType} attacks {player.name} for {monsterDamage} damage.");
                 player.TakeDamage(monsterDamage);
 
+                if (player.IsAlive())
+                {
+                    Console.WriteLine("\n=== Level Complete! ===\r\n");
+                    Console.WriteLine("====================\r\n");
+                    Console.WriteLine("VICTORY! YOU HAVE DEFEATED ALL THE MONSTERS");
+                }
+
                 if (!player.IsAlive())
                 {
-                    Console.WriteLine($"{player.name} has been defeated! Game Over.");
-                    return;
+                    Console.WriteLine("\n================================\r\n");
+                    Console.WriteLine($"{player.name} has been defeated! GAME OVER.");
+                    Console.WriteLine("GAME OVER");
+                    Console.WriteLine("================================\r\n");
+                    return; // Exit the game
                 }
             }
         }
-
-        Console.WriteLine("\n===== Level Complete =====");
     }
 }
 
