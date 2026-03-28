@@ -14,7 +14,7 @@ public partial class Program
 
         if (Gamechoice == "1")
         {
-        for (int i = 1; i <= 4; i++){
+        for (int i = 1; i <= 3; i++){
         (Level level, int startingPotions, string levelPotionHint) = BuildLevel(i);
 
         // Player (healing potions scale with level config)
@@ -30,33 +30,7 @@ public partial class Program
         Console.WriteLine("-- Player Stat Overview --");
         player.DisplayStats();
         Console.WriteLine();
-
-        Console.WriteLine("Choose your starting potion before entering the level:");
-        Console.WriteLine("1. Nature's Gift");
-        Console.WriteLine("2. Fire Immunity");
-        Console.WriteLine("3. Ocean's Breath");
-        Console.Write("Enter 1, 2, or 3: ");
-        string potionChoice = Console.ReadLine();
-        Console.WriteLine();
-
-        switch (potionChoice)
-        {
-            case "1":
-                player.ActivateNatureBuff();
-                break;
-            case "2":
-                player.ActivateFireImmune();
-                break;
-            case "3":
-                player.ActivateWaterBend();
-                break;
-            default:
-                Console.WriteLine("Invalid choice. No potion selected.");
-                break;
-        }
-
-        Console.WriteLine();
-        Console.WriteLine("Potion choice complete. The battle begins!");
+        player.SelectPotion(player);
         player.DisplayStats();
         Console.WriteLine();
         GameManager gameManager = new GameManager(player.name, level.Level_Number, level.Monsters[0], true);
@@ -82,6 +56,7 @@ public partial class Program
                 (Level level, int startingPotions, string levelPotionHint) = BuildLevel(1);
                 Player player = new Player("Hero", 120, 20, 5, startingPotions);
                 GameManager gameManager = new GameManager(player.name, level.Level_Number, level.Monsters[0], true);
+                player.SelectPotion(player);
                 gameManager.RunLevel(player, level, 1);
                 break;
             }
@@ -90,6 +65,7 @@ public partial class Program
             {
                 (Level level, int startingPotions, string levelPotionHint) = BuildLevel(2);
                 Player player = new Player("Hero", 120, 20, 5, startingPotions);
+                player.SelectPotion(player);
                 GameManager gameManager = new GameManager(player.name, level.Level_Number, level.Monsters[0], true);
                 gameManager.RunLevel(player, level, 2);
                 break;
@@ -99,6 +75,7 @@ public partial class Program
             {
                 (Level level, int startingPotions, string levelPotionHint) = BuildLevel(3);
                 Player player = new Player("Hero", 120, 20, 5, startingPotions);
+                player.SelectPotion(player);
                 GameManager gameManager = new GameManager(player.name, level.Level_Number, level.Monsters[0], true);
                 gameManager.RunLevel(player, level, 3);
                 break;
