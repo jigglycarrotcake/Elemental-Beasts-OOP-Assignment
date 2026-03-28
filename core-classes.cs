@@ -317,10 +317,40 @@ public class Player : Entity
             return 5;
         if (Water_Power && (target.monsterType.Equals("Ocean Guardian", StringComparison.OrdinalIgnoreCase) || target.monsterType.Equals("Ocean Guardians", StringComparison.OrdinalIgnoreCase)))
             return 3;
-        if (Fire_Immunity && (target.monsterType.Equals("Fire Goblins", StringComparison.OrdinalIgnoreCase) || target is Boss))
+        if (Fire_Immunity && (target.monsterType.Equals("Fire Goblin", StringComparison.OrdinalIgnoreCase) || target is Boss))
             return 10;
 
         return 0;
+    }
+
+    public void SelectPotion(Player player){
+
+    Console.WriteLine("Choose your starting potion before entering the level:");
+        Console.WriteLine("1. Nature's Gift");
+        Console.WriteLine("2. Fire Immunity");
+        Console.WriteLine("3. Ocean's Breath");
+        Console.Write("Enter 1, 2, or 3: ");
+        string potionChoice = Console.ReadLine();
+        Console.WriteLine();
+
+        switch (potionChoice)
+        {
+            case "1":
+                player.ActivateNatureBuff();
+                break;
+            case "2":
+                player.ActivateFireImmune();
+                break;
+            case "3":
+                player.ActivateWaterBend();
+                break;
+            default:
+                Console.WriteLine("Invalid choice. No potion selected.");
+                break;
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Potion choice complete. The battle begins!");
     }
 
     public override void DisplayStats()
@@ -397,25 +427,104 @@ public class Level
         set { Playername = value; }
     }
 
-    public int Level
+        public int Level
+        {
+            get { return LevelNumber; }
+            set { LevelNumber = value; }
+
+
+        }
+
+        public Monster CurrentMonster
+        {
+            get { return currentMonster; }
+            set { currentMonster = value; }
+        }
+
+        public bool IsRunning
+        {
+            get { return isRunning; }
+            set { isRunning = value; }
+        }
+
+        public void BuildLevel (Level level, int startingPotions, string levelPotionHint)
     {
-        get { return LevelNumber; }
-        set { LevelNumber = value; }
-
-
+        BuildLevel(LevelNumber);
     }
 
-    public Monster CurrentMonster
+    private void BuildLevel(int levelNumber)
     {
-        get { return currentMonster; }
-        set { currentMonster = value; }
+        throw new NotImplementedException();
     }
 
-    public bool IsRunning
-    {
-        get { return isRunning; }
-        set { isRunning = value; }
-    }
+    public void RunLevel(Player player,Level Level, int LevelNumber){
+            for (int i = 0; i < Level.Monsters.Length; i++)
+                {
+                    Monster currentMonster = Level.Monsters[i];
+                    Console.WriteLine($"\n--- Encounter {i + 1}: {currentMonster.monsterType} appears! ---");
+                    // 1 monster at a time.
 
-    
+                    while (currentMonster.IsAlive() && player.IsAlive())
+                    {
+                        Console.WriteLine("\n================= New Turn =================");
+                        player.ChooseAction();
+                        string userInput = Console.ReadLine();
+                        Console.WriteLine();
+
+                        int attackBonus = player.GetAttackBonus(currentMonster);
+                        int totalDamage = player.attackPower + attackBonus;
+
+                        switch (userInput)
+                        {
+                            case "1":
+                                if (attackBonus > 0)
+                                {
+                                    Console.WriteLine($"{player.name}'s potion is effective against {currentMonster.monsterType}! +{attackBonus} bonus damage.");
+                                }
+                                else if (!player.PotionChoice.Equals("None", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    Console.WriteLine($"{player.name}'s selected potion has no effect on {currentMonster.monsterType}.");
+                                }
+                                currentMonster.TakeDamage(totalDamage);
+                                break;
+                            case "2":
+                                player.Heal();
+                                break;
+                            case "3":
+                                player.Defend();
+                                break;
+                            default:
+                                Console.WriteLine("Invalid input, please choose 1, 2, or 3.");
+                                continue;
+                        }
+
+                        if (!currentMonster.IsAlive())
+                        {
+                            Console.WriteLine($"\n{currentMonster.monsterType} has been defeated!\n");
+                            break;
+                        }
+
+                        int monsterDamage = currentMonster.attackPower;
+                        int defenseBonus = player.GetDefenseBonus(currentMonster);
+                        if (defenseBonus > 0)
+                        {
+                            Console.WriteLine($"{player.name}'s potion resists this enemy! -{defenseBonus} damage this turn.");
+                            monsterDamage -= defenseBonus;
+                        }
+                        if (monsterDamage < 0) monsterDamage = 0;
+
+                        Console.WriteLine($"{currentMonster.monsterType} attacks {player.name} for {monsterDamage} damage.");
+                        player.TakeDamage(monsterDamage);
+
+                        if (!player.IsAlive())
+                        {
+                            Console.WriteLine($"{player.name} has been defeated! Game Over.");
+                            return;
+                        }
+                    }
+                }
+
+                Console.WriteLine("\n===== Level Complete =====");
     }
+}
+
