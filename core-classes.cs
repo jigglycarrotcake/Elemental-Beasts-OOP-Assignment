@@ -98,7 +98,7 @@ public class Entity
         isDefending = false;
         Console.WriteLine($"{Name} is no longer defending.");
     }
-    
+
     public virtual void DisplayStats()
     {
         // Basically like an indicator above the enitities to show their details like HP, skills & stuff (e.g. Hilichurls In Genshin)
@@ -297,7 +297,7 @@ public class Player : Entity
     {
         if (!IsPotionEffectiveAgainst(target))
             return 0;
-            // to ensure potions work against corresponding mosnters only
+        // to ensure potions work against corresponding mosnters only
         if (Buffer && target.monsterType.Equals("Earth Fairies", StringComparison.OrdinalIgnoreCase))
             return 10;
         if (Water_Power && (target.monsterType.Equals("Ocean Guardian", StringComparison.OrdinalIgnoreCase) || target.monsterType.Equals("Ocean Guardians", StringComparison.OrdinalIgnoreCase)))
@@ -323,9 +323,10 @@ public class Player : Entity
         return 0;
     }
 
-    public void SelectPotion(Player player){
+    public void SelectPotion(Player player)
+    {
 
-    Console.WriteLine("Choose your starting potion before entering the level:");
+        Console.WriteLine("Choose your starting potion before entering the level:");
         Console.WriteLine("1. Nature's Gift");
         Console.WriteLine("2. Fire Immunity");
         Console.WriteLine("3. Ocean's Breath");
@@ -372,7 +373,7 @@ public class Level
     private int LevelNumber;
     private string Description;
     private Monster[] MonstersInLevel;
-   
+
     public string Level_Name
     {
         get { return LevelName; }
@@ -406,48 +407,48 @@ public class Level
     }
 }
 
-   public class GameManager
+public class GameManager
+{
+    private string Playername;
+    private int LevelNumber;
+    private Monster currentMonster;
+    public bool isRunning; //so that program can access
+
+    public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning)
     {
-        private string Playername;
-        private int LevelNumber;
-        private Monster currentMonster;
-        public bool isRunning; //so that program can access
+        this.Playername = givenPlayername;
+        this.LevelNumber = givenLevel;
+        this.currentMonster = currentMonster;
+        this.isRunning = isRunning;
+    }
 
-        public GameManager(string givenPlayername, int givenLevel, Monster currentMonster, bool isRunning)
-        {
-            this.Playername = givenPlayername;
-            this.LevelNumber = givenLevel;
-            this.currentMonster = currentMonster;
-            this.isRunning = isRunning;
-        }
-
-        public string Player
+    public string Player
     {
         get { return Playername; }
         set { Playername = value; }
     }
 
-        public int Level
-        {
-            get { return LevelNumber; }
-            set { LevelNumber = value; }
+    public int Level
+    {
+        get { return LevelNumber; }
+        set { LevelNumber = value; }
 
 
-        }
+    }
 
-        public Monster CurrentMonster
-        {
-            get { return currentMonster; }
-            set { currentMonster = value; }
-        }
+    public Monster CurrentMonster
+    {
+        get { return currentMonster; }
+        set { currentMonster = value; }
+    }
 
-        public bool IsRunning
-        {
-            get { return isRunning; }
-            set { isRunning = value; }
-        }
+    public bool IsRunning
+    {
+        get { return isRunning; }
+        set { isRunning = value; }
+    }
 
-        public void BuildLevel (Level level, int startingPotions, string levelPotionHint)
+    public void BuildLevel(Level level, int startingPotions, string levelPotionHint)
     {
         BuildLevel(LevelNumber);
     }
@@ -457,74 +458,83 @@ public class Level
         throw new NotImplementedException();
     }
 
-    public void RunLevel(Player player,Level Level, int LevelNumber){
-            for (int i = 0; i < Level.Monsters.Length; i++)
+    public void RunLevel(Player player, Level Level, int LevelNumber)
+    {
+        for (int i = 0; i < Level.Monsters.Length; i++)
+        {
+            Monster currentMonster = Level.Monsters[i];
+            Console.WriteLine($"\n--- Encounter {i + 1}: {currentMonster.monsterType} appears! ---");
+            // 1 monster at a time.
+
+            while (currentMonster.IsAlive() && player.IsAlive())
+            {
+                Console.WriteLine("\n================= New Turn =================");
+                player.ChooseAction();
+                string userInput = Console.ReadLine();
+                Console.WriteLine();
+
+                int attackBonus = player.GetAttackBonus(currentMonster);
+                int totalDamage = player.attackPower + attackBonus;
+
+                switch (userInput)
                 {
-                    Monster currentMonster = Level.Monsters[i];
-                    Console.WriteLine($"\n--- Encounter {i + 1}: {currentMonster.monsterType} appears! ---");
-                    // 1 monster at a time.
-
-                    while (currentMonster.IsAlive() && player.IsAlive())
-                    {
-                        Console.WriteLine("\n================= New Turn =================");
-                        player.ChooseAction();
-                        string userInput = Console.ReadLine();
-                        Console.WriteLine();
-
-                        int attackBonus = player.GetAttackBonus(currentMonster);
-                        int totalDamage = player.attackPower + attackBonus;
-
-                        switch (userInput)
+                    case "1":
+                        if (attackBonus > 0)
                         {
-                            case "1":
-                                if (attackBonus > 0)
-                                {
-                                    Console.WriteLine($"{player.name}'s potion is effective against {currentMonster.monsterType}! +{attackBonus} bonus damage.");
-                                }
-                                else if (!player.PotionChoice.Equals("None", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    Console.WriteLine($"{player.name}'s selected potion has no effect on {currentMonster.monsterType}.");
-                                }
-                                currentMonster.TakeDamage(totalDamage);
-                                break;
-                            case "2":
-                                player.Heal();
-                                break;
-                            case "3":
-                                player.Defend();
-                                break;
-                            default:
-                                Console.WriteLine("Invalid input, please choose 1, 2, or 3.");
-                                continue;
+                            Console.WriteLine($"{player.name}'s potion is effective against {currentMonster.monsterType}! +{attackBonus} bonus damage.");
                         }
-
-                        if (!currentMonster.IsAlive())
+                        else if (!player.PotionChoice.Equals("None", StringComparison.OrdinalIgnoreCase))
                         {
-                            Console.WriteLine($"\n{currentMonster.monsterType} has been defeated!\n");
-                            break;
+                            Console.WriteLine($"{player.name}'s selected potion has no effect on {currentMonster.monsterType}.");
                         }
-
-                        int monsterDamage = currentMonster.attackPower;
-                        int defenseBonus = player.GetDefenseBonus(currentMonster);
-                        if (defenseBonus > 0)
-                        {
-                            Console.WriteLine($"{player.name}'s potion resists this enemy! -{defenseBonus} damage this turn.");
-                            monsterDamage -= defenseBonus;
-                        }
-                        if (monsterDamage < 0) monsterDamage = 0;
-
-                        Console.WriteLine($"{currentMonster.monsterType} attacks {player.name} for {monsterDamage} damage.");
-                        player.TakeDamage(monsterDamage);
-
-                        if (!player.IsAlive())
-                        {
-                            Console.WriteLine($"{player.name} has been defeated! Game Over.");
-                            return;
-                        }
-                    }
+                        currentMonster.TakeDamage(totalDamage);
+                        break;
+                    case "2":
+                        player.Heal();
+                        break;
+                    case "3":
+                        player.Defend();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid input, please choose 1, 2, or 3.");
+                        continue;
                 }
 
-                Console.WriteLine("\n===== Level Complete =====");
+                if (!currentMonster.IsAlive())
+                {
+                    Console.WriteLine($"\n{currentMonster.monsterType} has been defeated!\n");
+                    break;
+                }
+
+                int monsterDamage = currentMonster.attackPower;
+                int defenseBonus = player.GetDefenseBonus(currentMonster);
+                if (defenseBonus > 0)
+                {
+                    Console.WriteLine($"{player.name}'s potion resists this enemy! -{defenseBonus} damage this turn.");
+                    monsterDamage -= defenseBonus;
+                }
+                if (monsterDamage < 0) monsterDamage = 0;
+
+                Console.WriteLine($"{currentMonster.monsterType} attacks {player.name} for {monsterDamage} damage.");
+                player.TakeDamage(monsterDamage);
+
+                if (player.IsAlive())
+                {
+                    Console.WriteLine("\n=== Level Complete! ===\r\n");
+                    Console.WriteLine("====================\r\n");
+                    Console.WriteLine("VICTORY! YOU HAVE DEFEATED ALL THE MONSTERS");
+                }
+
+                if (!player.IsAlive())
+                {
+                    Console.WriteLine("\n================================\r\n");
+                    Console.WriteLine($"{player.name} has been defeated! GAME OVER.");
+                    Console.WriteLine("GAME OVER");
+                    Console.WriteLine("================================\r\n");
+                    return; // Exit the game
+                }
+            }
+        }
     }
 }
 
