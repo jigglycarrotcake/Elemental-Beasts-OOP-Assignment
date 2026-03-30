@@ -5,7 +5,48 @@ using Elemental_Beasts;
 public partial class Program
 {
     static void Main(string[] args)
-    {
+    {    Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+        string[] words   = { "ELEMENTAL", "BEASTS" };
+        ConsoleColor[] colours = {
+            ConsoleColor.Yellow,
+            ConsoleColor.Red,
+        };
+
+        string[] banner = {
+            @" __        _______ _     ____ ___  __  __ _____   _____ ___  ",
+            @" \ \      / / ____| |   / ___/ _ \|  \/  | ____| |_   _/ _ \ ",
+            @"  \ \ /\ / /|  _| | |  | |  | | | | |\/| |  _|     | || | | |",
+            @"   \ V  V / | |___| |__| |__| |_| | |  | | |___    | || |_| |",
+            @"    \_/\_/  |_____|_____\____\___/|_|  |_|_____|   |_| \___/ ",
+        };
+
+        ConsoleColor[] bannerColours = {
+            ConsoleColor.Red,
+            ConsoleColor.Yellow,
+            ConsoleColor.Green,
+            ConsoleColor.Cyan,
+            ConsoleColor.Magenta
+        };
+
+        Console.WriteLine();
+        for (int i = 0; i < banner.Length; i++)
+        {
+            Console.ForegroundColor = bannerColours[i];
+            Console.WriteLine(banner[i]);
+        }
+
+        Console.WriteLine();
+        for (int i = 0; i < words.Length; i++)
+        {
+            Console.ForegroundColor = colours[i % colours.Length];
+            Console.Write("  " + words[i]);
+        }
+
+        Console.ResetColor();
+        Console.WriteLine("\n");
+
+
         while (true)
         {
             Console.WriteLine("Choose an option:");
