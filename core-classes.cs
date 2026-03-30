@@ -205,7 +205,7 @@ public class Monster : Entity
                 {
                     currentHealth = 0; // makes health 0 doesn't go negative
                 }
-                Console.WriteLine($"{name} took {totalDamage} damage. Health: {currentHealth}/{maxHealth}");
+                Console.WriteLine($"{MonsterType} took {totalDamage} damage. Health: {currentHealth}/{maxHealth}");
                 Console.WriteLine("___________________________________________________________________");
                 Console.WriteLine();
     }
@@ -371,7 +371,7 @@ public class Player : Entity
         if (isDefending)
         {
             totalDamage = damage - defensePower;
-            Console.WriteLine($"{name} defended the attack!");
+            Console.WriteLine($"{monsterType} defended the attack!");
             isDefending = false;
             Console.WriteLine("___________________________________________________________________");
             Console.WriteLine();
@@ -389,7 +389,7 @@ public class Player : Entity
             currentHealth = 0; // makes health 0 doesn't go negative
         }
 
-        Console.WriteLine($"{name} took {totalDamage} damage. Health: {currentHealth}/{maxHealth}");
+        Console.WriteLine($"{monsterType} took {totalDamage} damage. Health: {currentHealth}/{maxHealth}");
         Console.WriteLine("___________________________________________________________________");
         Console.WriteLine();
     }
