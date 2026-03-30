@@ -5,7 +5,8 @@ using Elemental_Beasts;
 public partial class Program
 {
     static void Main(string[] args)
-    {    Console.OutputEncoding = System.Text.Encoding.UTF8;
+    {
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         string[] words   = { "ELEMENTAL", "BEASTS" };
         ConsoleColor[] colours = {
@@ -45,8 +46,7 @@ public partial class Program
 
         Console.ResetColor();
         Console.WriteLine("\n");
-
-
+        
         while (true)
         {
             Console.WriteLine("Choose an option:");
@@ -120,9 +120,9 @@ public partial class Program
         {
             Monster[] level3Monsters = new Monster[]
             {
-                new Monster(150, 15, 8, "Fire Goblin", "A blazing goblin."),
-                new Monster(150, 15, 8, "Fire Goblin", "Another fiery goblin."),
-                new Boss(200, 25, 10, "Fire Lord", "A blazing ball of flame emerges from the volcano.")
+                new Monster(150, 25, 8, "Fire Goblin", "A blazing goblin."),
+                new Monster(150, 25, 8, "Fire Goblin", "Another fiery goblin."),
+                new Boss(200, 35, 10, "Fire Lord", "A blazing ball of flame emerges from the volcano.")
             };
 
             Level level3 = new Level("Volcano Summit", 3, "The final fiery stage.", level3Monsters);
@@ -133,8 +133,8 @@ public partial class Program
         {
             Monster[] level2Monsters = new Monster[]
             {
-                new Monster(120, 10, 8, "Ocean Guardian", "A towering guardian of the sea."),
-                new Monster(120, 10, 8, "Ocean Guardian", "A second guardian rises from the waves.")
+                new Monster(120, 20, 8, "Ocean Guardian", "A towering guardian of the sea."),
+                new Monster(120, 20, 8, "Ocean Guardian", "A second guardian rises from the waves.")
             };
 
             Level level2 = new Level("Dance at Sea", 2, "A stormy ocean stage with fierce guardians.", level2Monsters);
