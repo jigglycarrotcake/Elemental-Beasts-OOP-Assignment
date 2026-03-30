@@ -5,9 +5,9 @@ public class Entity
 {
     private string Name;
     private int MaxHealth; //maxhealth = 120, DEFAULT AD = 20
-    private int CurrentHealth;
-    private int AttackPower;
-    private int DefensePower; //default = 5, can increase with potions or buffs
+    private int CurrentHealth; // tracks current health
+    private int AttackPower; 
+    private int DefensePower; //default = 5, can increase with potions
     protected bool isDefending;
 
     public string name
@@ -314,20 +314,27 @@ public class Player : Entity
     public void Heal()
     {
         if (Healing_Potions > 0)
-        {   if (currentHealth >= maxHealth)
+        {
+            if (currentHealth >= maxHealth)
             {
-                Console.WriteLine ("Health is already full!");
+                Console.WriteLine("Health is already full!");
                 Console.WriteLine("___________________________________________________________________");
                 Console.WriteLine();
-
             }
+            else
+            {
+                int healedAmount = 50;
+                int newHealth = currentHealth + healedAmount;
+                if (newHealth > maxHealth)
+                {
+                    newHealth = maxHealth;
+                }
 
-            else{
-            currentHealth += 50;
-            PotionHeals--;
-            Console.WriteLine($"{name} used a healing potion! Health: {currentHealth}/{maxHealth}");
-            Console.WriteLine("___________________________________________________________________");
-            Console.WriteLine();
+                currentHealth = newHealth;
+                PotionHeals--;
+                Console.WriteLine($"{name} used a healing potion! Health: {currentHealth}/{maxHealth}");
+                Console.WriteLine("___________________________________________________________________");
+                Console.WriteLine();
             }
         }
         else
@@ -357,6 +364,36 @@ public class Player : Entity
         }
     }
 
+    public override void TakeDamage(int damage)
+    {
+        int totalDamage = damage;
+
+        if (isDefending)
+        {
+            totalDamage = damage - defensePower;
+            Console.WriteLine($"{name} defended the attack!");
+            isDefending = false;
+            Console.WriteLine("___________________________________________________________________");
+            Console.WriteLine();
+        }
+
+        if (totalDamage < 0)
+        {
+            totalDamage = 0;
+        }
+
+        currentHealth -= totalDamage;
+
+        if (currentHealth < 0)
+        {
+            currentHealth = 0; // makes health 0 doesn't go negative
+        }
+
+        Console.WriteLine($"{name} took {totalDamage} damage. Health: {currentHealth}/{maxHealth}");
+        Console.WriteLine("___________________________________________________________________");
+        Console.WriteLine();
+    }
+
     public void ActivateFireImmune()
     {
         Fire_Immunity = true;
@@ -378,7 +415,7 @@ public class Player : Entity
         Console.WriteLine($"{name} selected Nature's Gift. This works only against Earth Fairies.");
     }
 
-    public bool IsPotionEffectiveAgainst(Monster target)
+    public bool IsPotionEffectiveAgainst(Monster target) //makes sure the potion works for their designated monster
     {
         if (Buffer && target.monsterType.Equals("Earth Fairies", StringComparison.OrdinalIgnoreCase))
             return true;
@@ -389,7 +426,7 @@ public class Player : Entity
         return false;
     }
 
-    public int GetAttackBonus(Monster target)
+    public int GetAttackBonus(Monster target) //attackbonus for designated monster
     {
         if (!IsPotionEffectiveAgainst(target))
             return 0;
@@ -404,7 +441,7 @@ public class Player : Entity
         return 0;
     }
 
-    public int GetDefenseBonus(Monster target)
+    public int GetDefenseBonus(Monster target) //defense bonus for designated monster
     {
         if (!IsPotionEffectiveAgainst(target))
             return 0;
@@ -414,7 +451,7 @@ public class Player : Entity
         if (Water_Power && (target.monsterType.Equals("Ocean Guardian", StringComparison.OrdinalIgnoreCase) || target.monsterType.Equals("Ocean Guardians", StringComparison.OrdinalIgnoreCase)))
             return 15;
         if (Fire_Immunity && (target.monsterType.Equals("Fire Goblin", StringComparison.OrdinalIgnoreCase) || target is Boss))
-            return 30;
+            return 20;
 
         return 0;
     }
@@ -436,13 +473,13 @@ public class Player : Entity
             switch (potionChoice)
             {
                 case "1":
-                    player.ActivateNatureBuff();
+                    player.ActivateNatureBuff(); //activates buff for earth fairies
                     break;
                 case "2":
-                    player.ActivateFireImmune();
+                    player.ActivateFireImmune(); // activates buff for fire lord and goblin
                     break;
                 case "3":
-                    player.ActivateWaterBend();
+                    player.ActivateWaterBend(); // activates buff for sea guardian
                     break;
                 default:
                     Console.WriteLine("Invalid choice. Please enter 1, 2, or 3.\n");
@@ -471,7 +508,7 @@ public class Player : Entity
 }
 
 
-public class Level
+public class Level //for level info to build and load
 {
     private string LevelName;
     private int LevelNumber;
@@ -552,17 +589,7 @@ public class Level
             set { isRunning = value; }
         }
 
-        public void BuildLevel (Level level, int startingPotions, string levelDescription)
-    {
-        BuildLevel(LevelNumber);
-    }
-
-    private void BuildLevel(int levelNumber)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void RunLevel(Player player,Level Level, int LevelNumber){
+    public void RunLevel(Player player,Level Level, int LevelNumber){ //to load levels in level selection and progression
             Console.WriteLine();
             Console.WriteLine($"Welcome to {Level.Level_Name}!");
             Console.WriteLine(Level.Level_Description);
@@ -573,6 +600,8 @@ public class Level
             player.DisplayStats();
             currentMonster.DisplayStats();
             Console.WriteLine();
+
+            Random rng = new Random();
 
             for (int i = 0; i < Level.Monsters.Length; i++)
                 {
@@ -643,9 +672,25 @@ public class Level
                             monsterDamage -= defenseBonus;
                         }
 
-                        if (monsterDamage < 0) monsterDamage = 0; //wth does this do?? Answer: Validates the attack power
+                        if (monsterDamage < 0) monsterDamage = 0;
 
-                        currentMonster.RandomAction(player); //bleghh
+                        bool monsterAttacks = rng.Next(0, 11) <= 8;
+                        if (monsterAttacks)
+                        {
+                            Console.WriteLine($"{currentMonster.monsterType} prepares to attack!");
+                            player.TakeDamage(monsterDamage);
+                            Console.WriteLine($"Monsters Health: {currentMonster.currentHealth}/{currentMonster.maxHealth}");
+                            Console.WriteLine("___________________________________________________________________");
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{currentMonster.monsterType} is defending!");
+                            currentMonster.Defend();
+                            Console.WriteLine($"Monsters Health: {currentMonster.currentHealth}/{currentMonster.maxHealth}");
+                            Console.WriteLine("___________________________________________________________________");
+                            Console.WriteLine();
+                        }
 
                         if (!player.IsAlive())
                         {
