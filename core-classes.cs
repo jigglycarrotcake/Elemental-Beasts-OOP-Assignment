@@ -314,7 +314,7 @@ public class Player : Entity
             }
             else
             {
-                int healedAmount = 50;
+                int healedAmount = 20;
                 int newHealth = currentHealth + healedAmount;
                 if (newHealth > maxHealth)
                 {
@@ -362,7 +362,7 @@ public class Player : Entity
         if (isDefending)
         {
             totalDamage = damage - defensePower;
-            Console.WriteLine($"{monsterType} defended the attack!");
+            Console.WriteLine($"{name} defended the attack!");
             isDefending = false;
             Console.WriteLine("___________________________________________________________________");
             Console.WriteLine();
@@ -373,14 +373,14 @@ public class Player : Entity
             totalDamage = 0;
         }
 
-        currentHealth -= totalDamage;
+        currentHealth -= totalDamage; //apply damage
 
         if (currentHealth < 0)
         {
             currentHealth = 0; // makes health 0 doesn't go negative
         }
 
-        Console.WriteLine($"{monsterType} took {totalDamage} damage. Health: {currentHealth}/{maxHealth}");
+        Console.WriteLine($"{name} took {totalDamage} damage. Health: {currentHealth}/{maxHealth}");
         Console.WriteLine("___________________________________________________________________");
         Console.WriteLine();
     }
@@ -408,7 +408,7 @@ public class Player : Entity
 
     public bool IsPotionEffectiveAgainst(Monster target) //makes sure the potion works for their designated monster
     {
-        if (Buffer && target.monsterType.Equals("Earth Fairies", StringComparison.OrdinalIgnoreCase))
+        if (Buffer && target.monsterType.Equals("Earth Fairies", StringComparison.OrdinalIgnoreCase)) //string comparison = ignore case sensitvity, target.monsterType = to get the monster type of the current monster, byte = stores data
             return true;
         if (Water_Power && (target.monsterType.Equals("Ocean Guardian", StringComparison.OrdinalIgnoreCase) || target.monsterType.Equals("Ocean Guardians", StringComparison.OrdinalIgnoreCase)))
             return true;
@@ -635,8 +635,7 @@ public class Level //for level info to build and load
                                 {
                                     Console.WriteLine($"{player.name}'s selected potion has no effect on {currentMonster.monsterType}.");
                                 }
-                                player.AttackEntity(currentMonster);
-
+                                player.AttackEntity(currentMonster); // normal attack
                                 Console.WriteLine();
                                 break;
                             case "2":
