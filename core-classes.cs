@@ -292,15 +292,6 @@ public class Player : Entity
         SelectedPotion = "None";
     }
 
-    public void AddHealingPotions(int amount)
-    {
-        PotionHeals += amount;
-        Console.WriteLine($"{name} received {amount} extra healing potions. Total: {PotionHeals}.");
-        Console.WriteLine("___________________________________________________________________");
-        Console.WriteLine();
-
-    }
-
     public void ChooseAction()
     {
         Console.WriteLine("Player's turn:");
