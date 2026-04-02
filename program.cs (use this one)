@@ -44,7 +44,7 @@ public partial class Program
             Console.Write("  " + words[i]);
         }
 
-        Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("\n");
         
         while (true)
@@ -64,7 +64,7 @@ public partial class Program
                     (Level level, int startingPotions, string levelPotionHint) = BuildLevel(i);
                     Player player = new Player("Hero", 120, 20, 5, startingPotions);
                     GameManager gameManager = new GameManager(player.name, level.Level_Number, level.Monsters[0], true);
-                    gameManager.RunLevel(player, level, i);
+                    gameManager.RunLevel(player, level, i); //run level
                 }
 
                 Console.WriteLine("New Game run complete. Returning to main menu...\n");
@@ -89,11 +89,12 @@ public partial class Program
                     }
                 } while (LevelChoice != "1" && LevelChoice != "2" && LevelChoice != "3");
 
+                // build level
                 int levelNumber = int.Parse(LevelChoice);
                 (Level level, int startingPotions, string levelDescription) = BuildLevel(levelNumber);
                 Player player = new Player("Hero", 120, 20, 5, startingPotions);
                 GameManager gameManager = new GameManager(player.name, level.Level_Number, level.Monsters[0], true);
-                gameManager.RunLevel(player, level, levelNumber);
+                gameManager.RunLevel(player, level, levelNumber); //runs the level
 
                 Console.WriteLine("Level complete. Returning to main menu...\n");
                 continue;
