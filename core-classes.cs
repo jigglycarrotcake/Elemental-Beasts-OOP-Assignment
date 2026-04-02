@@ -40,8 +40,6 @@ public class Entity
         set { DefensePower = value; }
     }
 
-    public object monsterType { get; internal set; }
-
     protected Entity(string givenName, int givenMaxHealth, int givenAttackPower, int givenDefensePower)
     {
         Name = givenName;
@@ -340,7 +338,7 @@ public class Player : Entity
     {
         if (IsAlive())
         {
-            Console.WriteLine($"{name} attacks {target.monsterType} for {attackPower} damage!");
+            Console.WriteLine($"{name} attacks Monster for {attackPower} damage!");
             target.TakeDamage(attackPower);
             Console.WriteLine($"Hero's Health: {currentHealth}/{maxHealth}");
             Console.WriteLine("___________________________________________________________________");
@@ -650,7 +648,10 @@ public class Level //for level info to build and load
 
                         if (!currentMonster.IsAlive())
                         {
-                            Console.WriteLine($"\n{currentMonster.monsterType} has been defeated!\n");
+                            Console.WriteLine($"{currentMonster.monsterType} has been defeated!");
+                            Console.WriteLine("___________________________________________________________________");
+                            Console.WriteLine("CONGRATULATIONS! You have cleared the level!");
+                            Console.WriteLine();
                             break;
                         }
 
@@ -684,18 +685,35 @@ public class Level //for level info to build and load
 
                         if (!player.IsAlive())
                         {
-                            Console.WriteLine("\n================================\r\n");
-                            Console.WriteLine($"{player.name} has been defeated! GAME OVER.");
-                            Console.WriteLine("GAME OVER");
-                            Console.WriteLine("================================\r\n");
+                            Console.OutputEncoding = System.Text.Encoding.UTF8; // The console has a default text encoding based on your system's 
+                            // language settings. When you write characters to it, they get translated into what actually shows on screen.
+                            Console.WriteLine();
+
+
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(@"  ____   ____   __  __  ____     ___  _   _ ____  ____ ");
+                            Console.WriteLine(@" / ___| /  _ \  |  \/  ||  __|   / _ \| | | | ___||  _ \");
+                            Console.WriteLine(@"| |  _  | |_) | | |\/| || |_    | | | | | | | |_  | |_) |");
+                            Console.WriteLine(@"| |_| | |  _  | | |  | ||  _|   | |_| | |_| |  _| |    /");
+                            Console.WriteLine(@" \____| |_| |_| |_|  |_||___|    \___/ \___/|___| |_|\_\");
+
+
+                            Console.WriteLine();
+                            Console.WriteLine();
+
+
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("        YOU  HAVE FALLEN");
+
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine();
                             return;
                         }
-                    }
-                }
-
-                    Console.WriteLine("\n=== Level Complete! ===\r\n");
-                    Console.WriteLine("====================\r\n");
-                    Console.WriteLine("VICTORY! YOU HAVE DEFEATED ALL THE MONSTERS");
+             }
     }
-}
+
+                        }
+                    }
+
 
